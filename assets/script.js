@@ -2,6 +2,9 @@ const currentWeatherData = document.querySelector('.current-weather');
 const fiveDayForcast = document.querySelector('.five-day');
 const userinput = document.getElementById('input');
 const searchBtn = document.getElementById('button-addon2');
+const listSearch = document.querySelector('.li_search');
+
+let historicalSearch = [];
 
 function getCurrentWeather(searchInput) {
   let api =
@@ -79,6 +82,28 @@ function getFiveDay(lat, lon) {
     });
 }
 
+function storedSearch() {
+  let searchHistory = Array.from(new Set(historicalSearch));
+  localStorage.setItem('search', JSON.stringify(searchHistory));
+  renderPastSearch(searchHistory);
+}
+
+function renderPastSearch(searchHistory) {
+  console.log(searchHistory);
+  listSearch.innerHTML = '';
+
+  if (screen.width > 768) {
+    for (let i = 0; i < searchHistory.length; i++) {
+      let area = searchHistory[i];
+
+      let li = document.createElement('li');
+      li.textContent = area;
+      li.setAttribute('class', 'past-search', i);
+      listSearch.appendChild(li);
+    }
+  }
+}
+
 function searchInputHandler(e) {
   e.preventDefault();
   let searchInput = userinput.value.trim();
@@ -88,8 +113,12 @@ function searchInputHandler(e) {
     return;
   }
 
+  historicalSearch.push(searchInput);
+
   console.log(searchInput);
   getCurrentWeather(searchInput);
+  storedSearch();
+
   userinput.innerHTML = '';
 }
 
