@@ -33,8 +33,7 @@ function getCurrentWeather(searchInput) {
               <li class="current-weather-li">Humidity: <span class="fw-normal"> ${
                 data.main.humidity
               } %</span></li>
-              <li class="current-weather-li">UV Index:<span id="uv" class="curSpan fw-normal"></span></li>
-          </ul>`;
+              </ul>`;
 
       let lat = data.coord.lat;
       let lon = data.coord.lon;
@@ -58,14 +57,15 @@ function getFiveDay(lat, lon) {
     })
     .then(function (data) {
       console.log(data);
-      fiveDayForcast.innerHTML = data.daily.map((day, index) => {
-        if (index <= 4) {
-          let dt = new Date(day.dt * 1000); //timestamp * 1000
-          return `<div class="card bg-info">
+      fiveDayForcast.innerHTML = data.daily
+        .map((day, index) => {
+          if (index <= 5) {
+            let dt = new Date(day.dt * 1000); //timestamp * 1000
+            return `<div class="card bg-info">
           <p class="city mb-0 fs-6 fw-bold text-wrap text-center" id="city-date">
           <span> ${dt.toDateString()}</span> <img src="https://openweathermap.org/img/wn/${
-            day.weather[0].icon
-          }.png" alt=${day.weather[0].description} /></p>
+              day.weather[0].icon
+            }.png" alt=${day.weather[0].description} /></p>
               <div class="card-body h6 p-1">
               <p class="card-text">Max-Temp: ${day.temp.max}&deg;F</p>
               <p class="card-text">Low-Temp: ${day.temp.min}&deg;F</p>
@@ -73,8 +73,9 @@ function getFiveDay(lat, lon) {
               <p class="card-text">Humidity: ${day.humidity} %</p>
               </div>
               </div>`;
-        }
-      });
+          }
+        })
+        .join(' ');
     });
 }
 
