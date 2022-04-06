@@ -6,6 +6,15 @@ const listSearch = document.querySelector('.li_search');
 
 let historicalSearch = [];
 
+function init() {
+  let storedInfo = JSON.parse(localStorage.getItem('search'));
+
+  if (storedInfo !== null) {
+    historicalSearch = storedInfo;
+  }
+  renderPastSearch(historicalSearch);
+}
+
 function getCurrentWeather(searchInput) {
   let api =
     'https://api.openweathermap.org/data/2.5/weather?q=' +
@@ -16,7 +25,6 @@ function getCurrentWeather(searchInput) {
       return respose.json();
     })
     .then(function (data) {
-      console.log(data);
       let date = new Date(data.dt * 1000);
       currentWeatherData.innerHTML = `<p class="city mb-0 fs-5 fw-bold text-wrap" id="city-date">${
         data.name
@@ -40,8 +48,7 @@ function getCurrentWeather(searchInput) {
 
       let lat = data.coord.lat;
       let lon = data.coord.lon;
-      console.log(lat);
-      console.log(lon);
+
       getFiveDay(lat, lon);
     });
 }
@@ -59,7 +66,6 @@ function getFiveDay(lat, lon) {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
       fiveDayForcast.innerHTML = data.daily
         .map((day, index) => {
           if (index <= 5) {
@@ -89,7 +95,6 @@ function storedSearch() {
 }
 
 function renderPastSearch(searchHistory) {
-  console.log(searchHistory);
   listSearch.innerHTML = '';
 
   if (screen.width > 768) {
@@ -104,6 +109,16 @@ function renderPastSearch(searchHistory) {
   }
 }
 
+function historySearchHandler(event) {
+  let target = event.target;
+
+  if (event.target.tagName == 'UL') {
+    target = event.target.childElement;
+  }
+  newTarget = target.textContent;
+  getCurrentWeather(newTarget);
+}
+
 function searchInputHandler(e) {
   e.preventDefault();
   let searchInput = userinput.value.trim();
@@ -115,11 +130,12 @@ function searchInputHandler(e) {
 
   historicalSearch.push(searchInput);
 
-  console.log(searchInput);
   getCurrentWeather(searchInput);
   storedSearch();
 
-  userinput.innerHTML = '';
+  userinput.value = '';
 }
 
 searchBtn.addEventListener('click', searchInputHandler);
+listSearch.addEventListener('click', historySearchHandler);
+init();
