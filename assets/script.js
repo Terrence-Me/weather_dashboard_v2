@@ -66,6 +66,7 @@ function getFiveDay(lat, lon) {
       return response.json();
     })
     .then(function (data) {
+      console.log(data);
       fiveDayForcast.innerHTML = data.daily
         .map((day, index) => {
           if (index <= 5) {
@@ -139,3 +140,6 @@ function searchInputHandler(e) {
 searchBtn.addEventListener('click', searchInputHandler);
 listSearch.addEventListener('click', historySearchHandler);
 init();
+// window.onbeforeunload = () => {
+//   localStorage.removeItem('clickedRecipe');
+// };
